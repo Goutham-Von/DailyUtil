@@ -1,0 +1,41 @@
+xclock -d -geometry 800x50 &
+sleep 1m
+kill -9 $!
+sleep 4m
+
+reportfile="/home/von/.vdailyreport"
+inputfile="/home/von/.vondel"
+
+if [ "$(grep -F "[$(date +"%Y")]" $reportfile)" = "" ]
+then
+	echo "" >> $reportfile
+	echo "[$(date +"%Y")]" >> $reportfile
+fi
+if [ "$(grep -F "[$(date +"%Y-%b")]" $reportfile)" = "" ]
+then
+	echo "" >> $reportfile
+	echo "....[$(date +"%Y-%b")]" >> $reportfile
+fi
+if [ "$(grep -F "[$(date +"%Y-%b-%d")]" $reportfile)" = "" ]
+then
+	echo "" >> $reportfile
+	echo "........[$(date +"%Y-%b-%d")]" >> $reportfile
+	echo "" >> $reportfile
+fi
+
+if [ -f "$inputfile" ]
+then
+	echo "            [$(date +"%H:%M")]" >> $reportfile
+	progress=$(sed '1!d' $inputfile) 
+	acquired=$(sed '2!d' $inputfile)
+	#eval "python3 test.py --status $progress --ns $acquired"
+	if [ "$progress" != "" ]
+	then
+		echo "                $progress" >> $reportfile
+	fi
+	if [ "$acquired" != "" ]
+	then
+		echo "                $acquired" >> $reportfile
+	fi
+	rm $inputfile
+fi 
